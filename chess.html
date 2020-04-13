@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .white {
+        background: #ccc;
+      }
+      .black {
+        background: black;
+      }
+      .highLight {
+        background: red;
+      }
+      .box_item {
+        height: 50px;
+        width: 50px;
+        display: inline-block;
+        cursor: pointer;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+    <script>
+      var app = angular.module('myApp', []);
+      app.controller('myCtrl', function($scope) {   
+          $scope.divElements = [];
+          $scope.setresetdiv = () => {
+            $scope.divElements = [];
+            let row = ['white','black','white','black','white','black','white','black'];
+            for(let i=0; i< 8; i++) {
+              for(let j = 0; j < row.length; j++) {
+                row[j] = (row[j] === 'white') ? 'black' : 'white';
+              }
+              $scope.divElements.push([...row]);
+            }
+          }
+
+          $scope.highlightDiagnols = (row,column) => {
+            $scope.setresetdiv();
+            var diff = row>column ? column: row;
+            for(let i= row-diff, j= column -diff; i < 8 && j < 8; i++) {
+                $scope.divElements[i][j++] = 'highLight';
+            }
+
+            var rowDiff = (row +column) % 7;
+            var columnDiff = (row +column) >= 8 ? 7: row +column;
+            var i= (row+column) > 7 ? (rowDiff === 0) ? 7: rowDiff : 0;
+            for( j= columnDiff; i < 8 && j >=0; ) {
+                $scope.divElements[i++][j--] = 'highLight';
+            }
+          }
+
+          $scope.setresetdiv();
+        });
+    </script>
+  </head>
+  <body>
+    <div ng-app="myApp" ng-controller="myCtrl">
+        <div class="">
+          <div data-ng-repeat="(i, row) in divElements track by $index">
+            <div class="box_item" ng-class="box" data-ng-repeat="(j,box) in row track by $index" ng-click="highlightDiagnols(i,j)">
+            </div>
+          </div>
+        </div>
+    </div>
+  </body>
+</html>
+
